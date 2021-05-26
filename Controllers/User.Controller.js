@@ -144,7 +144,7 @@ exports.updateUser = async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.Password, salt);
-    const updateUser = await Users.updateMany
+    const updateUser = await Users.updateMany(
       { _id: req.params.User_id },
       {
         FullName: req.body.FullName,
