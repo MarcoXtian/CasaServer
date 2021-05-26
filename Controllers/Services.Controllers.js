@@ -1,6 +1,7 @@
 const Service = require("../Models/Services.Models");
 const Joi = require("joi");
 
+//addService
 exports.addService = async (req, res) => {
   try {
     const find = await Service.find({ ServiceName: req.body.ServiceName });
@@ -26,9 +27,16 @@ exports.addService = async (req, res) => {
     return res.status(400).send(err.message);
   }
 };
-
+//update service
 exports.updateService = async (req, res) => {
   try {
+    const validationSchema = Joi.object({
+      Servicename: Joi.string().required(),
+      Image: Joi.string().required(),
+      Time: Joi.string().required(),
+    });
+    const { error } = validationSchema.validate(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
     const updateService = await Service.updateMany(
       { _id: req.params.Service_id },
       {
@@ -44,7 +52,7 @@ exports.updateService = async (req, res) => {
     return res.status(400).json({ message: err.message, status: 400 });
   }
 };
-
+//deleteService
 exports.deleteService = async (req, res) => {
   try {
     const removeService = await Service.remove({ _id: req.params.Service_id });
@@ -56,6 +64,7 @@ exports.deleteService = async (req, res) => {
   }
 };
 
+//get all service
 exports.getService = async (req, res) => {
   try {
     const service = await Service.find();

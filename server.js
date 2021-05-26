@@ -4,9 +4,11 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
+
 // Routes
 const UserRoute = require("./Routes/User.Routes");
 const ServiceRoute = require("./Routes/Services.Routes");
+const SendrequestRoute = require("./Routes/Sendrequest.Routes");
 
 const app = express();
 const dbURI = process.env.dbURI;
@@ -16,9 +18,11 @@ const PORT = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 
+
 // Routes Middlewares
 app.use("/api", UserRoute);
 app.use("/api", ServiceRoute);
+app.use("/api",SendrequestRoute)
 
 const options = {
   useNewUrlParser: true,
@@ -30,6 +34,6 @@ const options = {
 mongoose.connect(dbURI, options).then((res) => {
   console.log("Connected to", res.connections[0].name);
   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`CasaServer is running on port ${PORT}`);
   });
 });

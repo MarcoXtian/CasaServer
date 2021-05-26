@@ -1,9 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-// const moment = require("moment-timezone");
-// const datetoday = moment.tz(Date.now(),"Asia/Manila");
 
-const UsersSchema = new Schema({
+const sendRequestSchema = new Schema({
   FullName: {
     type: String,
     required: true,
@@ -14,30 +12,31 @@ const UsersSchema = new Schema({
     required: true,
     min: 4,
   },
-  Address: {
-    type: String,
+  Age: {
+    type: Number,
     required: true,
   },
-  Age: {
-    type: String,
-    required: true,
+  CarMilage:{
+      type: String,
+      required: true,
   },
   ContactNumber: {
+    type: Number,
+    required: true,
+    min: 10,
+  },
+  Services: {
     type: String,
     required: true,
-    max: 10,
   },
-  Email: {
+  CarandModel: {
     type: String,
     required: true,
-    max: 8,
   },
-  Password: {
-    type: String,
-    required: true,
-    min: 6,
-    max: 1024,
-  },
+  Day:{
+      type: String,
+      required: true,
+  }
 });
-const Users = mongoose.model("Users", UsersSchema);
-module.exports = Users;
+const SendRequest = mongoose.model("SendRequest", sendRequestSchema);
+module.exports = SendRequest;

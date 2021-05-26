@@ -3,6 +3,7 @@ const Joi = require("joi");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+//register
 exports.addUser = async (req, res) => {
   try {
     const find = await Users.find({ Email: req.body.Email });
@@ -21,8 +22,12 @@ exports.addUser = async (req, res) => {
 
     const { error } = validationSchema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
+
+    //salt and hashed password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.Password, salt);
+
+    //search if email is already in use
     if (find.length >= 1) {
       return res.status(403).send({ message: "Email is already existing" });
     } else {
@@ -44,7 +49,7 @@ exports.addUser = async (req, res) => {
     return res.status(400).send(err.message);
   }
 };
-
+//login
 exports.userLogin = async (req, res) => {
   try {
     const validation = Joi.object({
@@ -60,7 +65,7 @@ exports.userLogin = async (req, res) => {
         statusCode: 400,
       });
 
-    // Check if username exists
+    // Check if email exists
     const User = await Users.findOne({ Email: req.body.Email });
     if (!User)
       return res.status(404).send({
@@ -72,7 +77,7 @@ exports.userLogin = async (req, res) => {
     const validPass = await bcrypt.compare(req.body.Password, User.Password);
     if (!validPass)
       return res.status(403).send({
-        message: `Invalid email or password`,
+        message: ` Incorrect Email or password`,
         statusCode: 403,
       });
 
@@ -100,6 +105,7 @@ exports.userLogin = async (req, res) => {
   }
 };
 
+//get user by id
 exports.getUserInfo = async (req, res) => {
   try {
     const getInfo = await Users.findById(req.params._id);
@@ -111,6 +117,7 @@ exports.getUserInfo = async (req, res) => {
     return res.status(400).json({ message: err.message, statusCode: 400 });
   }
 };
+//get all user
 exports.getUsers = async (req, res) => {
   try {
     const User = await Users.find();
@@ -121,3 +128,37 @@ exports.getUsers = async (req, res) => {
     return res.status(400).json({ message: err.message, status: 400 });
   }
 };
+//update user
+exports.updateUser = async (req, res) => {
+  try {
+    const validationSchema = Joi.object({
+      FullName: Joi.string().min(4).required(),
+      Gender: Joi.string().min(4).required(),
+      Address: Joi.string().min(5).required(),
+      Age: Joi.number().min(10).required(),
+      Password: Joi.string()
+        .required()
+        .pattern(new RegExp("^([A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$")),
+    });
+    const { error } = validationSchema.validate(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.Password, salt);
+    const updateUser = await Users.updateMany
+      { _id: req.params.User_id },
+      {
+        FullName: req.body.FullName,
+        Gender: req.body.Gender,
+        Address: req.body.Address,
+        Age: req.body.Age,
+        Password: hashedPassword,
+      }
+    );
+    return res
+      .status(200)
+      .json({ data: updateUser, message: "User Updated", status: 200 });
+  } catch (err) {
+    return res.status(400).json({ message: err.message, status: 400 });
+  }
+};
+
