@@ -9,6 +9,7 @@ require("dotenv").config();
 const UserRoute = require("./Routes/User.Routes");
 const ServiceRoute = require("./Routes/Services.Routes");
 const SendrequestRoute = require("./Routes/Sendrequest.Routes");
+const ProductRoute = require("./Routes/Product.Routes");
 
 const app = express();
 const dbURI = process.env.dbURI;
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use("/api", UserRoute);
 app.use("/api", ServiceRoute);
 app.use("/api",SendrequestRoute)
+app.use("/api",ProductRoute);
 
 const options = {
   useNewUrlParser: true,

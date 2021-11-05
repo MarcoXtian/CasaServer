@@ -36,6 +36,10 @@ const sendRequestSchema = new Schema({
   Day:{
       type: String,
       required: true,
+  },
+  Time:{
+    type:String,
+    required: true,
   }
 });
 const SendRequest = mongoose.model("SendRequest", sendRequestSchema);

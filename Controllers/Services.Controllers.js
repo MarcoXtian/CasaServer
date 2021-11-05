@@ -4,7 +4,8 @@ const Joi = require("joi");
 //addService
 exports.addService = async (req, res) => {
   try {
-    const find = await Service.find({ ServiceName: req.body.ServiceName });
+    const find = await Service.find({ Servicename: req.body.Servicename });
+
     const validationSchema = Joi.object({
       Servicename: Joi.string().required(),
       Image: Joi.string().required(),
@@ -12,6 +13,7 @@ exports.addService = async (req, res) => {
     });
     const { error } = validationSchema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
+
     if (find.length >= 1) {
       return res.status(403).send({ message: "Service is already existing" });
     } else {
@@ -30,6 +32,7 @@ exports.addService = async (req, res) => {
 //update service
 exports.updateService = async (req, res) => {
   try {
+    const find = await Service.find({ Servicename: req.body.Servicename });
     const validationSchema = Joi.object({
       Servicename: Joi.string().required(),
       Image: Joi.string().required(),
@@ -37,7 +40,10 @@ exports.updateService = async (req, res) => {
     });
     const { error } = validationSchema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
-    const updateService = await Service.updateMany(
+    
+    if (find.length >= 1) {
+      return res.status(403).send({ message: "Service is already existing" });
+    } else {const updateService = await Service.updateMany(
       { _id: req.params.Service_id },
       {
         Servicename: req.body.Servicename,
@@ -48,6 +54,7 @@ exports.updateService = async (req, res) => {
     return res
       .status(200)
       .json({ data: updateService, message: "Service Updated", status: 200 });
+    }
   } catch (err) {
     return res.status(400).json({ message: err.message, status: 400 });
   }
@@ -55,7 +62,7 @@ exports.updateService = async (req, res) => {
 //deleteService
 exports.deleteService = async (req, res) => {
   try {
-    const removeService = await Service.remove({ _id: req.params.Service_id });
+    const removeService = await Service.deleteOne({ _id: req.params.Service_id });
     return res
       .status(200)
       .json({ data: removeService, message: "Service Removed", status: 200 });

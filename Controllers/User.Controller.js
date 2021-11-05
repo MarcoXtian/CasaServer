@@ -13,7 +13,7 @@ exports.addUser = async (req, res) => {
       Gender: Joi.string().min(4).required(),
       Address: Joi.string().min(5).required(),
       Age: Joi.number().min(10).required(),
-      ContactNumber: Joi.number().min(10).required(),
+      ContactNumber: Joi.string().length(11).required(),
       Email: Joi.string().min(8).required().email(),
       Password: Joi.string()
         .required()
